@@ -1,0 +1,42 @@
+## docker-compose example
+```
+version: '3'
+services:
+    orchestra:
+        restart: unless-stopped
+        image: ezka77/xen-orchestra-ce:latest
+        container_name: XO_server
+        ports:
+            - "8000:8000"
+        depends_on:
+            - redis
+        environment:
+            - DEBUG=xo:main
+            - NODE_ENV=production
+            - XOA_PLAN=5
+        #privileged: true
+        # SYS_ADMIN should be enough capability to use NFS mount
+        cap_add:
+          - SYS_ADMIN
+        volumes:
+            - xo-data:/storage
+        logging: &default_logging
+            driver: "json-file"
+            options:
+                max-size: "1M"
+                max-file: "2"
+    redis:
+        restart: unless-stopped
+        container_name: XO_redis
+        image: redis:alpine
+        command: redis-server --appendonly yes
+        volumes:
+            - redis-data:/data
+        logging:
+            <<: *default_logging
+
+volumes:
+  xo-data:
+  redis-data:
+  
+```

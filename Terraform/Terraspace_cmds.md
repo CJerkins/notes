@@ -1,0 +1,1 @@
+terraspace check_setup
